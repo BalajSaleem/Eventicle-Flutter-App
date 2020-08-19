@@ -29,6 +29,7 @@ class ActivityCard extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               activity.title,
+              textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.green[300],
                   letterSpacing: 2,

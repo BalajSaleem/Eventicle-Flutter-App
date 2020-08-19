@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-import 'models/Activity.dart';
-import 'components/activity_card.dart';
 import 'pages/view_location.dart';
 import 'pages/home.dart';
+import 'pages/login.dart';
+import 'package:exodus/pages/sign_up.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -17,9 +15,12 @@ void main() {
       backgroundColor: Colors.grey[800],
       fontFamily: 'TenorSans',
     ),
+    initialRoute: '/login',
     routes:{
-      '/' : (context) => Home(),
+      '/home': (context) => Home(),
       '/location': (context) => ViewMapLocation(),
+      '/login' : (context) => Login(),
+      '/register' : (context) => SignUp(),
     }
   )
   );
