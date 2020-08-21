@@ -1,16 +1,33 @@
-# exodus
+# Exodus (Eventicle for Mobile)
+The Flutter application for eventicle (event management system)
 
-A new Flutter application.
+## Description
+This application is the mobile counterpart of eventicle webapp.
 
-## Getting Started
+Includes the following features:
 
-This project is a starting point for a Flutter application.
+### For event attendee:
+-Authenticate and login user.
 
-A few resources to get you started if this is your first Flutter project:
+-List Events user can register for.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+-List Events user has registered for.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-List All Events in the eventicle Database.
+
+-Generate and View QR code for registered applications.
+
+-View Location of events on google maps.
+
+-Get notified whenever a new event is created, updated or deleted.
+
+### For Institution User / Officer:
+-Authenticate and login.
+
+-List Creeated events.
+
+-View location of created events on google maps
+
+-Scan an applicants QR code to get their details.
+
+-Get notified whenever of their created events gets an applicant.
