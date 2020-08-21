@@ -1,5 +1,5 @@
 # Exodus (Eventicle for Mobile)
-The Flutter application for eventicle (event management system)
+The Flutter application for [eventicle](https://github.com/BalajSaleem/Eventicle) (event management system)
 
 ## Description
 This application is the mobile counterpart of eventicle webapp.
