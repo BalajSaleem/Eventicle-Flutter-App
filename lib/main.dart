@@ -1,10 +1,11 @@
+import 'package:exodus/pages/view_qr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/view_location.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
-import 'package:exodus/pages/sign_up.dart';
+import 'pages/sign_up.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -21,6 +22,7 @@ void main() {
       '/location': (context) => ViewMapLocation(),
       '/login' : (context) => Login(),
       '/register' : (context) => SignUp(),
+      '/qr': (context) => QrCodeViewer()
     }
   )
   );

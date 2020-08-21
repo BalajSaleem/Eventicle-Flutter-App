@@ -7,10 +7,10 @@ import 'package:exodus/components/activity_card.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 class Home extends StatefulWidget {
   final Person user;
-
   const Home({ this.user}) ;
 
   @override
@@ -27,9 +27,12 @@ class _HomeState extends State<Home> {
   ];
   int _selectedNavIndex = 0;
   bool canApply = true;
+  bool canViewQr = false;
+  bool isCorporateUser = false;
   final GlobalKey<ScrollableState> globalScrollKey = new GlobalKey<ScrollableState>();
-  StompClient stompClient;
 
+  StompClient stompClient;
+  String stompDestination = '/topic/eventAnnouncements';
 
   void fetchRemainingUnregisteredActivities() async{
     http.Response response = await http.get('$baseUrl/eventsNotRegisteredRemaining/${widget.user.id}');
@@ -55,6 +58,14 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void fetchCreatedEvents() async{
+    http.Response response = await http.get('$baseUrl/officerEvents/${widget.user.id}');
+    List<dynamic> data = json.decode(response.body);
+    setState(() {
+      activities = (data.map((activity) => Activity.fromJson(activity))).toList();
+    });
+  }
+
   void applyForActivity(context, event) async{
     http.Response response = await http.put('$baseUrl/eventAddPerson/${event.id}/${widget.user.id}');
     if(response.statusCode == 200){
@@ -72,6 +83,10 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void viewActivityQrCode(event){
+
+  }
+
   void _showToast(BuildContext context,String message) {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(
@@ -84,7 +99,7 @@ class _HomeState extends State<Home> {
   dynamic onConnect(StompClient client, StompFrame frame) {
     print("Oh my god, were connected");
     client.subscribe(
-        destination: '/topic/eventAnnouncements',
+        destination: stompDestination,
         callback: (StompFrame frame) {
           final result = json.decode(frame.body) as Map;
           _showToast(globalScrollKey.currentContext, result['content']);
@@ -109,24 +124,45 @@ class _HomeState extends State<Home> {
     setState(() {
       _selectedNavIndex = index;
     });
-    switch (_selectedNavIndex) {
-      case 0:
-        fetchRemainingUnregisteredActivities();
-        canApply = true;
-        break;
-      case 1:
-        fetchAllEvents();
-        setState(() {
-          canApply = false;
-        });
-        break;
-      case 2:
-        fetchRegisteredEvents();
-        setState(() {
-          canApply = false;
-        });
-        break;
+
+    if(!isCorporateUser){
+      switch (_selectedNavIndex) {
+        case 0:
+          fetchRemainingUnregisteredActivities();
+          canApply = true;
+          canViewQr = false;
+          break;
+        case 1:
+          fetchAllEvents();
+          setState(() {
+            canApply = false;
+            canViewQr = false;
+          });
+          break;
+        case 2:
+          fetchRegisteredEvents();
+          setState(() {
+            canApply = false;
+            canViewQr = true;
+          });
+          break;
+      }
     }
+    else{
+      switch (_selectedNavIndex) {
+        case 0:
+          fetchCreatedEvents();
+          canApply = false;
+          canViewQr = true;
+          break;
+        case 1:
+          print('SHOW CHARTS!');
+          _showToast(globalScrollKey.currentContext, "Charts will apear here!");
+          //TODO: ADD CHARTS
+          break;
+      }
+    }
+
 
   }
 
@@ -134,18 +170,19 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     activities.clear();
-    fetchRemainingUnregisteredActivities();
+    isCorporateUser = (widget.user?.corporation != null);
+    _onNavItemTapped(0);
+    if(isCorporateUser){
+      stompDestination = '/topic/officer/${widget.user.id}';
+    }
     startStomping();
-//    new Future.delayed(Duration.zero,() {
-//    });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Events for you, ${widget.user.name}'),
+        title: Text('Events for ${widget.user.name}'),
         centerTitle: true,
         backgroundColor: Colors.greenAccent,
       ),
@@ -160,13 +197,16 @@ class _HomeState extends State<Home> {
               children: activities.map((activity) => ActivityCard(
                 activity: activity,
                 apply: () {applyForActivity(context, activity); },
-                applyEnabled: canApply,
+                canApply: canApply,
+                canViewQr: canViewQr,
               )).toList()
           ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: (!isCorporateUser)
+            ?
+        const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
             title: Text('Available Events'),
@@ -179,13 +219,62 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.event_available),
             title: Text('Registered Events'),
           ),
+        ]
+            :
+        const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            title: Text('Created Events'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_chart),
+            title: Text('Charts'),
+          ),
         ],
         currentIndex: _selectedNavIndex,
         selectedItemColor: Colors.greenAccent,
         onTap: _onNavItemTapped,
       ),
+      floatingActionButton: isCorporateUser ?
+      FloatingActionButton(
+        onPressed: () async {
+          var result = await scanner.scan();
+          print(result);
+          _showDialog(title: "Activity Details", body: result);
+        },
+        child: Icon(Icons.camera),
+        backgroundColor: Colors.greenAccent,
+      )
+          :
+          null,
     );
   }
 
 
+  Future<void> _showDialog({String title, String body}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(body),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

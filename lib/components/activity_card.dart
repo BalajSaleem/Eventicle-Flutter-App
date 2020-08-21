@@ -1,3 +1,4 @@
+import 'package:exodus/pages/view_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:exodus/models/Activity.dart';
 import 'package:exodus/pages/view_location.dart';
@@ -6,9 +7,10 @@ import 'package:exodus/pages/view_location.dart';
 class ActivityCard extends StatelessWidget {
   final Activity activity;
   final Function apply;
-  final bool applyEnabled;
+  final bool canApply;
+  final bool canViewQr;
 
-  ActivityCard({this.activity, this.apply, this.applyEnabled});
+  ActivityCard({this.activity, this.apply, this.canApply, this.canViewQr});
 
   static const TextStyle greyedStyle = TextStyle(
     color: Colors.grey,
@@ -122,7 +124,7 @@ class ActivityCard extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.grey[400],
                         ))),
-                applyEnabled
+                canApply
                     ? FlatButton.icon(
                     onPressed: apply,
                     icon: Icon(
@@ -133,7 +135,22 @@ class ActivityCard extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.grey[400],
                         )))
-                    : Text("Cant Apply", style: greyedStyle)
+                    : SizedBox(width: 1,),
+                canViewQr
+                    ? FlatButton.icon(
+                  onPressed: () {
+                    var route = new MaterialPageRoute(builder: (BuildContext context) => new QrCodeViewer(activity: activity));
+                    Navigator.of(context).push(route);
+                    },
+                    icon: Icon(
+                      Icons.casino,
+                      color: Colors.grey[400],
+                    ),
+                    label: Text("QR Code",
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                        )))
+                    : SizedBox(width: 1,)
               ],
             ),
 

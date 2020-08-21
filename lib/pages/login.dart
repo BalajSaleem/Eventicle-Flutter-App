@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:exodus/models/Person.dart';
 import 'dart:convert';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -13,10 +14,15 @@ class _LoginState extends State<Login> {
   String baseUrl = 'http://139.179.202.8:8080/api/v1/';
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+  bool isLoading = false;
 
   void handleLogin() async {
     String email = emailController.text;
     String password = passwordController.text;
+    setState(() {
+      isLoading = true;
+    });
+
     print('handling login');
     http.Response response = await http.get('$baseUrl/persons/$email/$password');
     Person user = Person.fromJson(json.decode(response.body));
@@ -48,6 +54,7 @@ class _LoginState extends State<Login> {
                     children: <Widget>[
                       TextField(
                         controller: emailController,
+                        autofillHints: [AutofillHints.username],
                         decoration: InputDecoration(
                             labelText: 'EMAIL',
                             labelStyle: TextStyle(
@@ -59,6 +66,7 @@ class _LoginState extends State<Login> {
                       SizedBox(height: 20.0),
                       TextField(
                         controller: passwordController,
+                        autofillHints: [AutofillHints.password],
                         decoration: InputDecoration(
                             labelText: 'PASSWORD',
                             labelStyle: TextStyle(
@@ -84,8 +92,11 @@ class _LoginState extends State<Login> {
                       ),
                       SizedBox(height: 40.0),
                       Container(
+
                         height: 40.0,
-                        child: Material(
+
+                        child:
+                        !isLoading ? Material(
                           borderRadius: BorderRadius.circular(20.0),
                           shadowColor: Colors.greenAccent,
                           color: Colors.green,
@@ -102,7 +113,12 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
-                        ),
+                        )
+                        :
+                        SpinKitWave(
+                          color: Colors.greenAccent,
+                          size: 30,
+                      )
                       ),
                       SizedBox(height: 20.0),
                     ],
