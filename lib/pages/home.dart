@@ -1,4 +1,5 @@
 import 'package:exodus/models/Person.dart';
+import 'package:exodus/pages/view_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -97,7 +98,6 @@ class _HomeState extends State<Home> {
   }
 
   dynamic onConnect(StompClient client, StompFrame frame) {
-    print("Oh my god, were connected");
     client.subscribe(
         destination: stompDestination,
         callback: (StompFrame frame) {
@@ -156,9 +156,8 @@ class _HomeState extends State<Home> {
           canViewQr = true;
           break;
         case 1:
-          print('SHOW CHARTS!');
-          _showToast(globalScrollKey.currentContext, "Charts will apear here!");
-          //TODO: ADD CHARTS
+          var route = new MaterialPageRoute(builder: (BuildContext context) => new Chart(activities: activities));
+          Navigator.of(context).push(route);
           break;
       }
     }
@@ -194,12 +193,16 @@ class _HomeState extends State<Home> {
           Center(child: Text('No activities available')) :
           Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: activities.map((activity) => ActivityCard(
-                activity: activity,
-                apply: () {applyForActivity(context, activity); },
-                canApply: canApply,
-                canViewQr: canViewQr,
-              )).toList()
+              children: //(isCorporateUser && _selectedNavIndex == 1) ?
+                  //<Widget>[Chart(activities: activities,)]
+                  //:
+                  activities.map((activity) => ActivityCard(
+                    activity: activity,
+                    user: widget.user,
+                    apply: () {applyForActivity(context, activity); },
+                    canApply: canApply,
+                    canViewQr: canViewQr,
+                  )).toList()
           ),
         ),
       ),

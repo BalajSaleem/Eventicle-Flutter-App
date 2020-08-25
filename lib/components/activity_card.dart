@@ -1,3 +1,4 @@
+import 'package:exodus/models/Person.dart';
 import 'package:exodus/pages/view_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:exodus/models/Activity.dart';
@@ -6,11 +7,12 @@ import 'package:exodus/pages/view_location.dart';
 
 class ActivityCard extends StatelessWidget {
   final Activity activity;
+  final Person user;
   final Function apply;
   final bool canApply;
   final bool canViewQr;
 
-  ActivityCard({this.activity, this.apply, this.canApply, this.canViewQr});
+  ActivityCard({this.activity, this.user, this.apply, this.canApply, this.canViewQr});
 
   static const TextStyle greyedStyle = TextStyle(
     color: Colors.grey,
@@ -139,7 +141,7 @@ class ActivityCard extends StatelessWidget {
                 canViewQr
                     ? FlatButton.icon(
                   onPressed: () {
-                    var route = new MaterialPageRoute(builder: (BuildContext context) => new QrCodeViewer(activity: activity));
+                    var route = new MaterialPageRoute(builder: (BuildContext context) => new QrCodeViewer(activity: activity, user: user));
                     Navigator.of(context).push(route);
                     },
                     icon: Icon(

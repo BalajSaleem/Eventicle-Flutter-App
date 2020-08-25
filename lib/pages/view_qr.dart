@@ -6,8 +6,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 class QrCodeViewer extends StatelessWidget {
 
   final Activity activity;
+  final Person user;
 
-  const QrCodeViewer({Key key, this.activity}) : super(key: key);
+  const QrCodeViewer({Key key, this.activity, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class QrCodeViewer extends StatelessWidget {
             ),
             SizedBox(height: 80,),
             QrImage(
-              data: 'You are registered for: \n ${activity.title} \n from: ${activity.startDate} \n till:  ${activity.endDate} \n at: ${activity.address}',
+              data: '${user.name} ${user.surname} of ID ${user.id} is registered for: \n ${activity.title} \n ID: ${activity.id}\n from: ${activity.startDate} \n till:  ${activity.endDate} \n at: ${activity.address}',
               version: QrVersions.auto,
               size: 300.0,
               backgroundColor: Colors.white,
