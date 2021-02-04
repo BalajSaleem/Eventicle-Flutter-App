@@ -32,6 +32,7 @@ Includes the following features:
 
 -Get notified whenever of their created events gets an applicant.
 
+# Screenshots
 ![WhatsApp Image 2021-02-04 at 16 58 58](https://user-images.githubusercontent.com/46113862/106889975-914cde80-670a-11eb-8353-36bb0e19f589.jpeg)
 ![WhatsApp Image 2021-02-04 at 16 58 58 (1)](https://user-images.githubusercontent.com/46113862/106889976-927e0b80-670a-11eb-9f46-8fbccb0507c6.jpeg)
 ![WhatsApp Image 2021-02-04 at 16 58 58 (2)](https://user-images.githubusercontent.com/46113862/106889979-9316a200-670a-11eb-984a-6a8d97b89f6c.jpeg)
